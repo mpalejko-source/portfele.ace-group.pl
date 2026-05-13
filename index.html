@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Controlling i Portfele - Biofeed</title>
+  <title>Portfele Klientów - ACE Group</title>
 
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -128,10 +128,6 @@
         0 14px 30px rgba(0,0,0,.34);
     }
 
-    .backToMainBtn:active{
-      transform:translateY(0);
-    }
-
     .panel{
       border:1px solid rgba(125,211,252,.18);
       background:
@@ -146,9 +142,10 @@
       gap:18px;
     }
 
+    /* ZMIANA: Równe kolumny dla portfeli */
     .row{
       display:grid;
-      grid-template-columns:65fr 35fr;
+      grid-template-columns:1fr 1fr;
       gap:18px;
       align-items:stretch;
     }
@@ -199,11 +196,6 @@
       z-index:1;
     }
 
-    .small .cardInner{
-      grid-template-columns:minmax(0,1fr) 150px;
-      gap:14px;
-    }
-
     .metaTop{
       display:flex;
       align-items:center;
@@ -245,10 +237,6 @@
       letter-spacing:.1px;
     }
 
-    .small h3{
-      font-size:20px;
-    }
-
     .card p{
       margin:0;
       color:var(--muted);
@@ -266,10 +254,6 @@
       padding:14px;
       overflow:hidden;
       position:relative;
-    }
-
-    .small .visual{
-      height:118px;
     }
 
     .vizHeader{
@@ -331,43 +315,6 @@
           transparent 85% 100%);
     }
 
-    .curve{
-      position:absolute;
-      left:12px;
-      right:12px;
-      top:42px;
-      height:38px;
-      opacity:.95;
-      background-repeat:no-repeat;
-      background-size:100% 100%;
-      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 60' preserveAspectRatio='none'><path d='M0 45 C20 40, 35 22, 60 28 S110 58, 140 42 S190 18, 225 24 S270 42, 300 20' fill='none' stroke='rgba(125,211,252,0.95)' stroke-width='4' stroke-linecap='round'/></svg>");
-    }
-
-    .miniBars{
-      position:absolute;
-      left:14px;
-      right:14px;
-      bottom:14px;
-      display:grid;
-      grid-template-columns:repeat(5,1fr);
-      gap:8px;
-      align-items:end;
-      height:44px;
-    }
-
-    .miniBars span{
-      display:block;
-      border-radius:8px 8px 4px 4px;
-      background:linear-gradient(180deg, rgba(125,211,252,.65), rgba(167,139,250,.30));
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .miniBars span:nth-child(1){ height:28px; }
-    .miniBars span:nth-child(2){ height:40px; }
-    .miniBars span:nth-child(3){ height:22px; }
-    .miniBars span:nth-child(4){ height:34px; }
-    .miniBars span:nth-child(5){ height:18px; }
-
     .cardFooter{
       margin-top:16px;
       padding-top:14px;
@@ -422,13 +369,6 @@
       white-space:nowrap;
     }
 
-    .footerNote{
-      margin-top:18px;
-      color:var(--muted2);
-      font-size:13px;
-      text-align:center;
-    }
-
     @media (max-width:1280px){
       .heroTitle{font-size:40px;}
     }
@@ -438,25 +378,19 @@
         grid-template-columns:1fr;
         text-align:center;
       }
-
       .brandLeft{
         justify-content:center;
       }
-
       .heroAside{
         text-align:center;
         min-width:auto;
       }
-
       .row{
         grid-template-columns:1fr;
       }
-
-      .cardInner,
-      .small .cardInner{
+      .cardInner{
         grid-template-columns:1fr;
       }
-
       .visual{
         max-width:100%;
       }
@@ -466,19 +400,15 @@
       .wrap{
         padding:14px 14px 24px;
       }
-
       .aceLogo{
         height:52px;
       }
-
       .heroTitle{
         font-size:30px;
       }
-
       .heroAside{
         font-size:17px;
       }
-
       .backToMainBtn{
         width:100%;
         max-width:340px;
@@ -486,20 +416,13 @@
         min-height:46px;
         border-radius:16px;
       }
-
       .card{
         min-height:unset;
         padding:18px 16px 16px;
       }
-
       .card h3{
         font-size:21px;
       }
-
-      .small h3{
-        font-size:18px;
-      }
-
       .cardFooter{
         flex-direction:column;
         align-items:flex-start;
@@ -515,16 +438,16 @@
         <img src="ACE-white.png" alt="ACE" class="topLogo aceLogo">
       </div>
 
-      <h1 class="heroTitle">Controlling i Portfele - Biofeed</h1>
+      <h1 class="heroTitle">Portfele Klientów - ACE Group</h1>
 
       <div class="heroAside">
-        Panel controllingowy Biofeed
+        Panel główny
       </div>
     </header>
 
     <div class="topActionBar">
       <a class="backToMainBtn" href="https://raporty.ace-group.pl/" target="_blank" rel="noopener noreferrer">
-        Przejdź do panelu głównego
+        Wróć do strony startowej
       </a>
     </div>
 
@@ -532,22 +455,19 @@
       <div class="rows">
 
         <div class="row">
-          <a class="card reportCard" href="sbm/index.html" data-source="sbm/index.html">
+          <a class="card reportCard" href="biofeed/index.html" data-source="biofeed/index.html">
             <div class="cardInner">
               <div class="content">
                 <div class="metaTop">
-                  <span class="cardTag">Controlling</span>
-                  <span class="marketPill">Śruta sojowa</span>
+                  <span class="cardTag">Portfel Zakupowy</span>
+                  <span class="marketPill">Biofeed</span>
                 </div>
-                <h3>Śruta sojowa - controlling</h3>
-                <p>Raport controllingowy, portfel zakupowy oraz bieżące materiały dla śruty sojowej w jednym miejscu.</p>
+                <h3>Portfel Biofeed</h3>
+                <p>Aktualne pozycje, wykresy i analiza dla grupy Biofeed zintegrowane w jednym raporcie.</p>
               </div>
-
               <div class="visual" aria-hidden="true">
                 <div class="vizHeader">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot"></span>
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
                 </div>
                 <div class="tableLines">
                   <div class="line l1"></div>
@@ -558,117 +478,175 @@
                 <div class="spark"></div>
               </div>
             </div>
-
             <div class="cardFooter">
               <div class="updateBadge is-loading">
                 Aktualizacja: <span class="reportDate">ładowanie...</span>
               </div>
-              <div class="go">Otwórz →</div>
+              <div class="go">Otwórz portfel →</div>
             </div>
           </a>
 
-          <a class="card small reportCard" href="podsumowanie-sbm/index.html" data-reports-source="podsumowanie-sbm/reports-data.js">
+          <a class="card reportCard" href="mirpasz/index.html" data-source="mirpasz/index.html">
             <div class="cardInner">
               <div class="content">
                 <div class="metaTop">
-                  <span class="cardTag">Podsumowanie</span>
+                  <span class="cardTag">Portfel Zakupowy</span>
+                  <span class="marketPill">Mirpasz</span>
                 </div>
-                <h3>Podsumowanie śruta sojowa</h3>
-                <p>Krótsze materiały, komentarze i zbiorczy przegląd najważniejszych informacji.</p>
+                <h3>Portfel Mirpasz</h3>
+                <p>Aktualne pozycje, wykresy i analiza dla grupy Mirpasz zintegrowane w jednym raporcie.</p>
               </div>
-
               <div class="visual" aria-hidden="true">
                 <div class="vizHeader">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot"></span>
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
                 </div>
-                <div class="curve"></div>
-                <div class="miniBars">
-                  <span></span><span></span><span></span><span></span><span></span>
+                <div class="tableLines">
+                  <div class="line l2"></div>
+                  <div class="line l1"></div>
+                  <div class="line l4"></div>
+                  <div class="line l3"></div>
                 </div>
+                <div class="spark"></div>
               </div>
             </div>
-
             <div class="cardFooter">
               <div class="updateBadge is-loading">
                 Aktualizacja: <span class="reportDate">ładowanie...</span>
               </div>
-              <div class="go">Otwórz →</div>
+              <div class="go">Otwórz portfel →</div>
             </div>
           </a>
         </div>
 
         <div class="row">
-          <a class="card reportCard" href="rsm/index.html" data-source="rsm/index.html">
+          <a class="card reportCard" href="iko/index.html" data-source="iko/index.html">
             <div class="cardInner">
               <div class="content">
                 <div class="metaTop">
-                  <span class="cardTag">Controlling</span>
-                  <span class="marketPill">Śruta rzepakowa</span>
+                  <span class="cardTag">Portfel Zakupowy</span>
+                  <span class="marketPill">IKO</span>
                 </div>
-                <h3>Śruta rzepakowa - controlling</h3>
-                <p>Raport controllingowy, portfel zakupowy oraz bieżące materiały dla śruty rzepakowej w jednym miejscu.</p>
+                <h3>Portfel IKO</h3>
+                <p>Zestawienie analityczne, strategie zabezpieczeń i wykresy dla podmiotu IKO.</p>
               </div>
-
               <div class="visual" aria-hidden="true">
                 <div class="vizHeader">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot"></span>
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
                 </div>
                 <div class="tableLines">
-                  <div class="line l2"></div>
                   <div class="line l3"></div>
+                  <div class="line l2"></div>
+                  <div class="line l4"></div>
                   <div class="line l1"></div>
+                </div>
+                <div class="spark"></div>
+              </div>
+            </div>
+            <div class="cardFooter">
+              <div class="updateBadge is-loading">
+                Aktualizacja: <span class="reportDate">ładowanie...</span>
+              </div>
+              <div class="go">Otwórz portfel →</div>
+            </div>
+          </a>
+
+          <a class="card reportCard" href="ace/index.html" data-source="ace/index.html">
+            <div class="cardInner">
+              <div class="content">
+                <div class="metaTop">
+                  <span class="cardTag">Portfel Wewnętrzny</span>
+                  <span class="marketPill">ACE Group</span>
+                </div>
+                <h3>Modelowy Portfel ACE</h3>
+                <p>Wewnętrzne dane referencyjne i benchmarki analityczne ACE Group na bieżący miesiąc.</p>
+              </div>
+              <div class="visual" aria-hidden="true">
+                <div class="vizHeader">
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                </div>
+                <div class="tableLines">
+                  <div class="line l4"></div>
+                  <div class="line l3"></div>
+                  <div class="line l2"></div>
+                  <div class="line l1"></div>
+                </div>
+                <div class="spark"></div>
+              </div>
+            </div>
+            <div class="cardFooter">
+              <div class="updateBadge is-loading">
+                Aktualizacja: <span class="reportDate">ładowanie...</span>
+              </div>
+              <div class="go">Otwórz portfel →</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="row">
+          <a class="card reportCard" href="klient5/index.html" data-source="klient5/index.html">
+            <div class="cardInner">
+              <div class="content">
+                <div class="metaTop">
+                  <span class="cardTag">Portfel Zakupowy</span>
+                  <span class="marketPill">Klient 5</span>
+                </div>
+                <h3>Portfel Klient 5</h3>
+                <p>Indywidualne zestawienie strategii rynkowej i tabel z wycenami dla Klienta 5.</p>
+              </div>
+              <div class="visual" aria-hidden="true">
+                <div class="vizHeader">
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                </div>
+                <div class="tableLines">
+                  <div class="line l1"></div>
+                  <div class="line l3"></div>
+                  <div class="line l2"></div>
                   <div class="line l4"></div>
                 </div>
                 <div class="spark"></div>
               </div>
             </div>
-
             <div class="cardFooter">
               <div class="updateBadge is-loading">
                 Aktualizacja: <span class="reportDate">ładowanie...</span>
               </div>
-              <div class="go">Otwórz →</div>
+              <div class="go">Otwórz portfel →</div>
             </div>
           </a>
 
-          <a class="card small reportCard" href="podsumowanie-rsm/index.html" data-reports-source="podsumowanie-rsm/reports-data.js">
+          <a class="card reportCard" href="klient6/index.html" data-source="klient6/index.html">
             <div class="cardInner">
               <div class="content">
                 <div class="metaTop">
-                  <span class="cardTag">Podsumowanie</span>
+                  <span class="cardTag">Portfel Zakupowy</span>
+                  <span class="marketPill">Klient 6</span>
                 </div>
-                <h3>Podsumowanie śruta rzepakowa</h3>
-                <p>Krótsze materiały, komentarze i zbiorczy przegląd najważniejszych informacji.</p>
+                <h3>Portfel Klient 6</h3>
+                <p>Indywidualne zestawienie strategii rynkowej i tabel z wycenami dla Klienta 6.</p>
               </div>
-
               <div class="visual" aria-hidden="true">
                 <div class="vizHeader">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot"></span>
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
                 </div>
-                <div class="curve"></div>
-                <div class="miniBars">
-                  <span></span><span></span><span></span><span></span><span></span>
+                <div class="tableLines">
+                  <div class="line l2"></div>
+                  <div class="line l4"></div>
+                  <div class="line l1"></div>
+                  <div class="line l3"></div>
                 </div>
+                <div class="spark"></div>
               </div>
             </div>
-
             <div class="cardFooter">
               <div class="updateBadge is-loading">
                 Aktualizacja: <span class="reportDate">ładowanie...</span>
               </div>
-              <div class="go">Otwórz →</div>
+              <div class="go">Otwórz portfel →</div>
             </div>
           </a>
         </div>
 
       </div>
-
     </main>
   </div>
 
@@ -683,19 +661,14 @@
 
     function normalizeDate(raw){
       if (!raw) return null;
-
       const value = String(raw).trim().replace(/\s+/g, ' ');
       let m;
 
       m = value.match(/^(\d{4})[.\-\/](\d{2})[.\-\/](\d{2})$/);
-      if (m) {
-        return { iso: `${m[1]}-${m[2]}-${m[3]}`, pl: `${m[3]}.${m[2]}.${m[1]}` };
-      }
+      if (m) return { iso: `${m[1]}-${m[2]}-${m[3]}`, pl: `${m[3]}.${m[2]}.${m[1]}` };
 
       m = value.match(/^(\d{2})[.\-\/](\d{2})[.\-\/](\d{4})$/);
-      if (m) {
-        return { iso: `${m[3]}-${m[2]}-${m[1]}`, pl: `${m[1]}.${m[2]}.${m[3]}` };
-      }
+      if (m) return { iso: `${m[3]}-${m[2]}-${m[1]}`, pl: `${m[1]}.${m[2]}.${m[3]}` };
 
       return null;
     }
@@ -705,32 +678,17 @@
       const doc = parser.parseFromString(htmlText, 'text/html');
 
       const directCandidates = [];
-
-      const metaSelectors = [
-        'meta[name="report-updated"]',
-        'meta[name="updated"]',
-        'meta[name="last-updated"]',
-        'meta[property="report-updated"]'
-      ];
-
+      const metaSelectors = ['meta[name="report-updated"]', 'meta[name="updated"]', 'meta[name="last-updated"]', 'meta[property="report-updated"]'];
+      
       metaSelectors.forEach(selector => {
         const el = doc.querySelector(selector);
         if (el && el.content) directCandidates.push(el.content);
       });
 
-      const dataSelectors = [
-        '[data-report-updated]',
-        '[data-updated]',
-        '.reportDate',
-        '.updateDate',
-        '.updated',
-        '.aktualizacja'
-      ];
-
+      const dataSelectors = ['[data-report-updated]', '[data-updated]', '.reportDate', '.updateDate', '.updated', '.aktualizacja'];
       dataSelectors.forEach(selector => {
         const el = doc.querySelector(selector);
         if (!el) return;
-
         const attrDate = el.getAttribute('data-report-updated') || el.getAttribute('data-updated');
         if (attrDate) directCandidates.push(attrDate);
         if (el.textContent) directCandidates.push(el.textContent.trim());
@@ -741,11 +699,7 @@
         if (parsed) return parsed;
       }
 
-      const bodyText = (doc.body ? doc.body.textContent : htmlText)
-        .replace(/\u00A0/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-
+      const bodyText = (doc.body ? doc.body.textContent : htmlText).replace(/\u00A0/g, ' ').replace(/\s+/g, ' ').trim();
       const patterns = [
         /Aktualizacja\s*:?\s*(\d{2}[.\-\/]\d{2}[.\-\/]\d{4})/i,
         /Aktualizacja\s*:?\s*(\d{4}[.\-\/]\d{2}[.\-\/]\d{2})/i,
@@ -772,45 +726,29 @@
 
     function extractLatestDateFromReportsData(jsText){
       if (!jsText) return null;
-
       const match = jsText.match(/window\.REPORTS\s*=\s*(\[[\s\S]*?\]);?/);
       if (!match || !match[1]) return null;
-
+      
       let reports;
-      try {
-        reports = new Function(`return ${match[1]};`)();
-      } catch (err) {
-        return null;
-      }
+      try { reports = new Function(`return ${match[1]};`)(); } 
+      catch (err) { return null; }
 
       if (!Array.isArray(reports) || !reports.length) return null;
-
+      
       let latest = null;
-
       for (const item of reports) {
         if (!item || !item.published) continue;
-
         const parsed = normalizeDate(item.published);
         if (!parsed) continue;
-
-        if (!latest || parsed.iso > latest.iso) {
-          latest = parsed;
-        }
+        if (!latest || parsed.iso > latest.iso) latest = parsed;
       }
-
       return latest;
     }
 
     async function fetchText(url){
       const separator = url.includes('?') ? '&' : '?';
-      const response = await fetch(`${url}${separator}v=${Date.now()}`, {
-        cache: 'no-store'
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
+      const response = await fetch(`${url}${separator}v=${Date.now()}`, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.text();
     }
 
@@ -824,7 +762,6 @@
 
       try {
         let parsed = null;
-
         if (reportsSource) {
           const jsText = await fetchText(reportsSource);
           parsed = extractLatestDateFromReportsData(jsText);
@@ -842,7 +779,6 @@
         }
 
         dateSpan.textContent = parsed.pl;
-
         if (parsed.iso === todayISO) {
           badge.classList.add('is-today');
         } else {
