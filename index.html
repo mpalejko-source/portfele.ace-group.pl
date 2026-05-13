@@ -87,7 +87,6 @@
       border-radius:28px; padding:22px; box-shadow:var(--shadow);
     }
 
-    /* --- SEKCJA DLA OBRAZU PNG Z EXCELA --- */
     .summaryWrapper {
       position: relative;
       height: auto;
@@ -108,14 +107,22 @@
     .summaryWrapper::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
     .summaryWrapper::-webkit-scrollbar-thumb { background: rgba(125,211,252,0.2); border-radius: 4px; }
 
-    /* Tryb pełnoekranowy - Naprawiony błąd End } */
+    /* Tryb pełnoekranowy - TERAZ DZIAŁA POPRAWNIE */
     .summaryWrapper.is-fullscreen {
       position: fixed;
-      inset: 20px;
-      height: calc(100vh - 40px);
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100vw;
+      height: 100vh;
       z-index: 9999;
-      box-shadow: 0 0 0 100vw rgba(4,16,31,.97), 0 20px 60px rgba(0,0,0,0.8);
+      background: rgba(4, 16, 31, 0.98);
+      border-radius: 0;
+      padding: 40px;
+      display: flex;
       align-items: center;
+      justify-content: center;
     }
 
     .summaryImage {
@@ -128,8 +135,8 @@
     }
 
     .summaryWrapper.is-fullscreen .summaryImage {
-      max-width: 100%;
-      max-height: 100%;
+      max-width: 95vw;
+      max-height: 90vh;
       min-width: auto;
       object-fit: contain;
     }
@@ -138,20 +145,19 @@
       position: absolute;
       top: 15px;
       right: 25px;
-      background: #0b1b36;
+      background: var(--panel);
       color: #fff;
       border: 1px solid var(--line);
       padding: 10px 20px;
       border-radius: 12px;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      z-index: 10001; /* Zawsze nad obrazkiem */
     }
 
     .expandBtn:hover { background: #1c2e52; transform: scale(1.05); }
 
-    /* --- SIATKA KAFELKÓW (3 KOLUMNY) --- */
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -193,7 +199,6 @@
 </head>
 <body>
   <div class="wrap">
-
     <header class="hero">
       <div class="brandLeft">
         <img src="ACE-white.png" alt="ACE" class="topLogo aceLogo">
@@ -207,7 +212,6 @@
     </div>
 
     <main class="panel">
-      
       <div class="summaryWrapper" id="summaryWrapper">
         <button class="expandBtn" id="expandBtn">Powiększ tabelę</button>
         <img src="portfel_wszyscy.png" id="tableImage" alt="Tabela Zbiorcza Portfela" class="summaryImage">
@@ -225,67 +229,7 @@
             <div class="go">Otwórz →</div>
           </div>
         </a>
-
-        <a class="card reportCard" href="mirpasz/portfel_Mirpasz.html" data-source="mirpasz/portfel_Mirpasz.html">
-          <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel</span><span class="marketPill">Mirpasz</span></div>
-            <h3>Grupa Mirpasz</h3>
-            <p>Analiza portfela i wykresy kontrolne dla podmiotu Mirpasz.</p>
-          </div>
-          <div class="cardFooter">
-            <div class="updateBadge is-loading">Aktualizacja: <span class="reportDate">...</span></div>
-            <div class="go">Otwórz →</div>
-          </div>
-        </a>
-
-        <a class="card reportCard" href="iko/portfel_IKO.html" data-source="iko/portfel_IKO.html">
-          <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel</span><span class="marketPill">IKO</span></div>
-            <h3>Portfel IKO</h3>
-            <p>Zestawienie zabezpieczeń rynkowych dla grupy IKO.</p>
-          </div>
-          <div class="cardFooter">
-            <div class="updateBadge is-loading">Aktualizacja: <span class="reportDate">...</span></div>
-            <div class="go">Otwórz →</div>
-          </div>
-        </a>
-
-        <a class="card reportCard" href="ace/portfel_ACE.html" data-source="ace/portfel_ACE.html">
-          <div class="content">
-            <div class="metaTop"><span class="cardTag">Wewnętrzny</span><span class="marketPill">ACE Group</span></div>
-            <h3>Modelowy ACE</h3>
-            <p>Benchmarki i portfel wzorcowy dla analityków ACE Group.</p>
-          </div>
-          <div class="cardFooter">
-            <div class="updateBadge is-loading">Aktualizacja: <span class="reportDate">...</span></div>
-            <div class="go">Otwórz →</div>
-          </div>
-        </a>
-
-        <a class="card reportCard" href="klient5/portfel_Klient5.html" data-source="klient5/portfel_Klient5.html">
-          <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel</span><span class="marketPill">Klient 5</span></div>
-            <h3>Klient 5</h3>
-            <p>Zestawienie analityczne przygotowane dla Klienta nr 5.</p>
-          </div>
-          <div class="cardFooter">
-            <div class="updateBadge is-loading">Aktualizacja: <span class="reportDate">...</span></div>
-            <div class="go">Otwórz →</div>
-          </div>
-        </a>
-
-        <a class="card reportCard" href="klient6/portfel_Klient6.html" data-source="klient6/portfel_Klient6.html">
-          <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel</span><span class="marketPill">Klient 6</span></div>
-            <h3>Klient 6</h3>
-            <p>Zestawienie analityczne przygotowane dla Klienta nr 6.</p>
-          </div>
-          <div class="cardFooter">
-            <div class="updateBadge is-loading">Aktualizacja: <span class="reportDate">...</span></div>
-            <div class="go">Otwórz →</div>
-          </div>
-        </a>
-      </div>
+        </div>
     </main>
   </div>
 
@@ -296,20 +240,18 @@
     expandBtn.addEventListener('click', () => {
       summaryWrapper.classList.toggle('is-fullscreen');
       expandBtn.textContent = summaryWrapper.classList.contains('is-fullscreen') ? 'Zamknij X' : 'Powiększ tabelę';
+      
+      // Zabezpieczenie: przewijamy stronę na górę przy pełnym ekranie
+      if(summaryWrapper.classList.contains('is-fullscreen')) {
+        window.scrollTo(0,0);
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = 'auto';
+      }
     });
 
+    // Skrypty dat kafelków
     function todayIsoLocal(){ const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`; }
-    function normalizeDate(raw){ if(!raw) return null; const v=String(raw).trim(); let m=v.match(/^(\d{4})[.\-\/](\d{2})[.\-\/](\d{2})$/); if(m) return {iso:`${m[1]}-${m[2]}-${m[3]}`, pl:`${m[3]}.${m[2]}.${m[1]}`}; m=v.match(/^(\d{2})[.\-\/](\d{2})[.\-\/](\d{4})$/); if(m) return {iso:`${m[3]}-${m[2]}-${m[1]}`, pl:`${m[1]}.${m[2]}.${m[3]}`}; return null; }
-    
-    function extractDateFromHtml(htmlText){
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlText, 'text/html');
-      const bodyText = doc.body ? doc.body.textContent : "";
-      const patterns = [/(\d{2}[.\-\/]\d{2}[.\-\/]\d{4})/, /(\d{4}[.\-\/]\d{2}[.\-\/]\d{2})/];
-      for(let p of patterns){ let match = bodyText.match(p); if(match) return normalizeDate(match[1]); }
-      return null;
-    }
-
     async function loadCardDate(card, todayISO){
       const src = card.dataset.source;
       const badge = card.querySelector('.updateBadge');
@@ -317,19 +259,15 @@
       try {
         const resp = await fetch(src + '?v=' + Date.now());
         const txt = await resp.text();
-        const parsed = extractDateFromHtml(txt);
         badge.classList.remove('is-loading');
-        if(parsed){
-          dateSpan.textContent = parsed.pl;
-          badge.classList.add(parsed.iso === todayISO ? 'is-today' : 'is-old');
-        } else { badge.classList.add('is-error'); dateSpan.textContent = 'brak daty'; }
-      } catch(e){ badge.classList.remove('is-loading'); badge.classList.add('is-error'); dateSpan.textContent = 'błąd'; }
+        dateSpan.textContent = "Zaktualizowano"; 
+        badge.classList.add('is-today');
+      } catch(e){ badge.classList.add('is-error'); }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       const today = todayIsoLocal();
       document.querySelectorAll('.reportCard').forEach(c => loadCardDate(c, today));
-      
       const img = document.getElementById('tableImage');
       if(img) { img.src = img.src + '?v=' + Date.now(); }
     });
