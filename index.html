@@ -87,35 +87,40 @@
       border-radius:28px; padding:22px; box-shadow:var(--shadow);
     }
 
-  /* --- SEKCJA TABELI PODSUMOWUJĄCEJ --- */
-.summaryWrapper {
-  position: relative;
-  height: 45vh;
-  min-height: 380px;
-  margin-bottom: 24px;
-  border-radius: 20px;
-  border: 1px solid var(--line);
-  background: transparent; /* ZMIANA: usunięto #ffffff */
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    /* --- ZOPTYMALIZOWANA SEKCJA IFRAME DLA TABELI Z EXCELA --- */
+    .summaryWrapper {
+      position: relative;
+      height: auto;
+      min-height: 490px; /* Wysokość idealnie dobrana pod Twoje 27 wierszy z Excela */
+      margin-bottom: 24px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(11, 27, 54, 0.4);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-.summaryWrapper.is-fullscreen {
-  position: fixed;
-  inset: 20px;
-  height: calc(100vh - 40px);
-  z-index: 9999;
-  box-shadow: 0 0 0 100vw rgba(4,16,31,.95), 0 20px 60px rgba(0,0,0,0.5); /* ZMIANA: ciemniejsza maska */
-}
+    .summaryWrapper.is-fullscreen {
+      position: fixed;
+      inset: 20px;
+      height: calc(100vh - 40px);
+      z-index: 9999;
+      box-shadow: 0 0 0 100vw rgba(4,16,31,.97), 0 20px 60px rgba(0,0,0,0.8);
+    }
 
-.summaryIframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-  background: transparent; /* ZMIANA: przezroczysty iframe */
-}
+    .summaryIframe {
+      width: 100%;
+      height: 100%;
+      min-height: 490px;
+      border: none;
+      display: block;
+      background: transparent;
+    }
+    
+    .summaryWrapper.is-fullscreen .summaryIframe {
+      height: 100%;
+    }
 
     .expandBtn {
       position: absolute;
