@@ -107,7 +107,6 @@
     .summaryWrapper::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
     .summaryWrapper::-webkit-scrollbar-thumb { background: rgba(125,211,252,0.2); border-radius: 4px; }
 
-    /* Tryb pełnoekranowy - NOWE PODEJŚCIE DLA PRAWDZIWEGO SKALOWANIA PIONOWEGO */
     .summaryWrapper.is-fullscreen {
       position: fixed;
       top: 0 !important;
@@ -119,29 +118,29 @@
       z-index: 9999;
       background: rgba(4, 16, 31, 0.98);
       border-radius: 0;
-      padding: 20px; /* Reduced padding for more space */
+      padding: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden; /* Przewijanie będzie obsługiwane przez object-fit contain */
+      overflow: hidden;
     }
 
     .summaryImage {
-      max-width: 100%; /* Parent's 100% width, limited by default layout and min-width */
+      max-width: 100%;
       height: auto;
       display: block;
-      min-width: 1100px; /* Minimum size in default view */
+      min-width: 1100px;
       border-radius: 8px;
       image-rendering: -webkit-optimize-contrast;
     }
 
     .summaryWrapper.is-fullscreen .summaryImage {
-      max-width: none; /* Override constraints so width can be set explicitly */
-      max-height: none; /* Override constraints */
-      min-width: auto; /* Correctly reset */
-      width: 100%; /* Force the image element to fill the available space in fullscreen */
-      height: 100%; /* Force the image element to fill the available space in fullscreen */
-      object-fit: contain; /* Scale aspect-ratio-friendly content to fit this 100% space, centering it */
+      max-width: none;
+      max-height: none;
+      min-width: auto;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     .expandBtn {
@@ -156,7 +155,7 @@
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      z-index: 10001; /* Zawsze nad obrazkiem */
+      z-index: 10001;
     }
 
     .expandBtn:hover { background: #1c2e52; transform: scale(1.05); }
@@ -220,9 +219,9 @@
         <img src="portfel_wszyscy.png" id="tableImage" alt="Tabela Zbiorcza Portfela" class="summaryImage">
       </div>
 
-     <div class="grid">
+      <div class="grid">
 
-        <a class="card reportCard" href="biofeed/portfel_Biofeed.html" data-source="biofeed/portfel_Biofeed.html">
+        <a class="card reportCard" href="viewer.html?client=biofeed">
           <div class="content">
             <div class="metaTop"><span class="cardTag">Portfel</span><span class="marketPill">Biofeed</span></div>
             <h3>Grupa Biofeed</h3>
@@ -234,7 +233,7 @@
           </div>
         </a>
 
-        <a class="card reportCard" href="mirpasz/portfel_Mirpasz.html" data-source="mirpasz/portfel_Mirpasz.html">
+        <a class="card reportCard" href="viewer.html?client=mirpasz">
           <div class="content">
             <div class="metaTop"><span class="cardTag">Portfel</span><span class="marketPill">Mirpasz</span></div>
             <h3>Grupa Mirpasz</h3>
@@ -246,7 +245,7 @@
           </div>
         </a>
 
-        <a class="card reportCard" href="iko/portfel_IKO.html" data-source="iko/portfel_IKO.html">
+        <a class="card reportCard" href="viewer.html?client=iko">
           <div class="content">
             <div class="metaTop"><span class="cardTag">Portfel</span><span class="marketPill">IKO</span></div>
             <h3>Portfel IKO</h3>
@@ -258,7 +257,7 @@
           </div>
         </a>
 
-        <a class="card reportCard" href="ace/portfel_ACE.html" data-source="ace/portfel_ACE.html">
+        <a class="card reportCard" href="viewer.html?client=ace">
           <div class="content">
             <div class="metaTop"><span class="cardTag">Wewnętrzny</span><span class="marketPill">ACE Group</span></div>
             <h3>Modelowy ACE</h3>
@@ -270,7 +269,7 @@
           </div>
         </a>
 
-        <a class="card reportCard" href="klient5/portfel_Klient5.html" data-source="klient5/portfel_Klient5.html">
+        <a class="card reportCard" href="viewer.html?client=klient5">
           <div class="content">
             <div class="metaTop"><span class="cardTag">Portfel</span><span class="marketPill">Klient 5</span></div>
             <h3>Klient 5</h3>
@@ -282,7 +281,7 @@
           </div>
         </a>
 
-        <a class="card reportCard" href="klient6/portfel_Klient6.html" data-source="klient6/portfel_Klient6.html">
+        <a class="card reportCard" href="viewer.html?client=klient6">
           <div class="content">
             <div class="metaTop"><span class="cardTag">Portfel</span><span class="marketPill">Klient 6</span></div>
             <h3>Klient 6</h3>
@@ -295,16 +294,18 @@
         </a>
 
       </div>
+    </main>
+  </div>
 
   <script>
     const expandBtn = document.getElementById('expandBtn');
     const summaryWrapper = document.getElementById('summaryWrapper');
 
+    // Obsługa pełnego ekranu dla tabeli zbiorczej graficznej
     expandBtn.addEventListener('click', () => {
       summaryWrapper.classList.toggle('is-fullscreen');
       expandBtn.textContent = summaryWrapper.classList.contains('is-fullscreen') ? 'Zamknij X' : 'Powiększ tabelę';
       
-      // Zabezpieczenie: przewijamy stronę na górę przy pełnym ekranie i blokujemy scrollowanie tła
       if(summaryWrapper.classList.contains('is-fullscreen')) {
         window.scrollTo(0,0);
         document.body.style.overflow = 'hidden';
@@ -313,24 +314,45 @@
       }
     });
 
-    // Skrypty dat kafelków
-    function todayIsoLocal(){ const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`; }
-    async function loadCardDate(card, todayISO){
-      const src = card.dataset.source;
-      const badge = card.querySelector('.updateBadge');
-      const dateSpan = card.querySelector('.reportDate');
+    // Zoptymalizowana weryfikacja dostępności i daty pliku master
+    async function checkMasterFileStatus() {
+      const badges = document.querySelectorAll('.updateBadge');
+      const dateSpans = document.querySelectorAll('.reportDate');
+
       try {
-        const resp = await fetch(src + '?v=' + Date.now());
-        const txt = await resp.text();
-        badge.classList.remove('is-loading');
-        dateSpan.textContent = "Zaktualizowano"; 
-        badge.classList.add('is-today');
-      } catch(e){ badge.classList.add('is-error'); }
+        // Zapytanie HEAD pobiera tylko metadane (oszczędność transferu przy dużym pliku master)
+        const response = await fetch('portfele_master.html?v=' + Date.now(), { method: 'HEAD' });
+        
+        badges.forEach(badge => badge.classList.remove('is-loading'));
+
+        if (response.ok) {
+          // Próba odczytania realnej daty modyfikacji pliku z serwera
+          const lastModifiedHeader = response.headers.get('Last-Modified');
+          let displayDate = "Zaktualizowano";
+
+          if (lastModifiedHeader) {
+            const dateObj = new Date(lastModifiedHeader);
+            // Formatowanie do czytelnej postaci np. "15.05.2026"
+            displayDate = dateObj.toLocaleDateString('pl-PL');
+          }
+
+          dateSpans.forEach(span => span.textContent = displayDate);
+          badges.forEach(badge => badge.classList.add('is-today'));
+        } else {
+          badges.forEach(badge => badge.classList.add('is-error'));
+        }
+      } catch (e) {
+        badges.forEach(badge => {
+          badge.classList.remove('is-loading');
+          badge.classList.add('is-error');
+        });
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      const today = todayIsoLocal();
-      document.querySelectorAll('.reportCard').forEach(c => loadCardDate(c, today));
+      checkMasterFileStatus();
+      
+      // Odświeżenie timestampu dla tabeli zbiorczej w tle
       const img = document.getElementById('tableImage');
       if(img) { img.src = img.src + '?v=' + Date.now(); }
     });
