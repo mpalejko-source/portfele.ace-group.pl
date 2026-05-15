@@ -22,6 +22,7 @@
     .header {
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 24px; border-bottom: 1px solid var(--line); padding-bottom: 16px;
+      max-width: 1700px; margin-left: auto; margin-right: auto;
     }
     .clientTitle { margin: 0; font-size: 32px; font-weight: 900; color: var(--text); }
     .btnBack {
@@ -42,20 +43,19 @@
     <a href="index.html" class="btnBack">← Powrót do pulpitu</a>
   </header>
 
-  <main id="viewerContent">
-    <div id="loader" class="loader">Pobieranie bazy danych raportów ACE...</div>
+  <main id="viewerContent" class="wrap">
+    <div id="loader" class="loader">Pobieranie i dopasowywanie danych strukturalnych ACE...</div>
   </main>
 
   <script>
-    // Konfiguracja wycinania podstron (każdy klient dostaje po 3 kolejne bloki <section class="page">)
-    // Kolejność musi odpowiadać kolejności oznaczania "TAK" w kolumnie K w Excelu.
+    // Mapowanie kafelków na unikalne ID przypisywane przez makro w Excelu
     const CLIENT_CONFIG = {
-      'biofeed': { title: 'Grupa Biofeed', start: 0, count: 3 },
-      'mirpasz': { title: 'Grupa Mirpasz', start: 3, count: 3 },
-      'iko':     { title: 'Portfel IKO',    start: 6, count: 3 },
-      'ace':     { title: 'Modelowy ACE (Wewnętrzny)', start: 9, count: 3 },
-      'klient5': { title: 'Portfel - Klient 5', start: 12, count: 3 },
-      'klient6': { title: 'Portfel - Klient 6', start: 15, count: 3 }
+      'biofeed': { title: 'Grupa Biofeed' },
+      'mirpasz': { title: 'Grupa Mirpasz' },
+      'iko':     { title: 'Portfel IKO' },
+      'ace':     { title: 'Modelowy ACE (Wewnętrzny)' },
+      'klient5': { title: 'Portfel - Klient 5' },
+      'klient6': { title: 'Portfel - Klient 6' }
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -64,43 +64,45 @@
       const config = CLIENT_CONFIG[clientKey];
 
       if (!config) {
-        document.getElementById('clientTitle').textContent = 'Błąd';
-        document.getElementById('viewerContent').innerHTML = '<div class="loader" style="color:#ff5a5a;">Nieprawidłowy identyfikator klienta portfela.</div>';
+        document.getElementById('clientTitle').textContent = 'Błąd pobierania';
+        document.getElementById('viewerContent').innerHTML = '<div class="loader" style="color:#ff5a5a;">Nieprawidłowy parametr klienta.</div>';
         return;
       }
 
       document.getElementById('clientTitle').textContent = config.title;
-      document.title = `${config.title} - Widok analityczny`;
+      document.title = `${config.title} - Analiza Portfela`;
 
       try {
         const response = await fetch('portfele_master.html?v=' + Date.now());
-        if (!response.ok) throw new Error('Brak pliku portfele_master.html. Uruchom Krok 2 w Excelu.');
+        if (!response.ok) throw new Error('Nie odnaleziono bazy portfele_master.html.');
         
         const htmlText = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
 
-        // Pobranie wszystkich sekcji stron wygenerowanych przez makro
-        const allPages = doc.querySelectorAll('section.page');
+        // Zaciągnięcie oryginalnych stylów CSS z pliku głównego (zapewnia identyczny desing)
+        doc.querySelectorAll('style').forEach(styleNode => {
+          document.head.appendChild(styleNode.cloneNode(true));
+        });
+
+        // FILTROWANIE PO TAGU DANYCH: Wyciągamy tylko te sekcje, które należą do wywołanego ID klienta
+        const clientPages = doc.querySelectorAll(`section.page[data-client="${clientKey}"]`);
         
         const container = document.getElementById('viewerContent');
         document.getElementById('loader').style.display = 'none';
 
-        // Wycięcie zestawu stron przypisanych do wybranego kafelka
-        const clientPages = Array.from(allPages).slice(config.start, config.start + config.count);
-
         if (clientPages.length === 0) {
-          container.innerHTML = '<div class="loader" style="color:#ff5a5a;">Brak wygenerowanych danych w pliku zbiorczym dla tego klienta. Sprawdź indeksy lub uruchom generowanie HTML ponownie.</div>';
+          container.innerHTML = '<div class="loader" style="color:#ff5a5a;">Brak wygenerowanych danych dla tego klienta w pliku portfele_master.html. Upewnij się, że w Excelu ustawiono flagę "TAK".</div>';
           return;
         }
 
-        // Wstrzykiwanie wyciętych stron do dokumentu
+        // Wstrzyknięcie precyzyjnie dobranych stron
         clientPages.forEach(page => {
           container.appendChild(page.cloneNode(true));
         });
 
       } catch (error) {
-        document.getElementById('viewerContent').innerHTML = `<div class="loader" style="color:#ff5a5a;">Błąd krytyczny: ${error.message}</div>`;
+        document.getElementById('viewerContent').innerHTML = `<div class="loader" style="color:#ff5a5a;">Błąd parsowania: ${error.message}</div>`;
       }
     });
   </script>
