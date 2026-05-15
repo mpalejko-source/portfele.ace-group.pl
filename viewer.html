@@ -34,7 +34,6 @@
     .btnBack:hover { background: #1c2e52; transform: translateY(-1px); }
     .loader { text-align: center; padding: 60px; font-size: 18px; color: rgba(242,246,255,.56); font-style: italic; }
     
-    /* Kontenery na arkusze wyciągnięte z Excela */
     .sheetContainer {
       background: rgba(11, 27, 54, 0.4);
       border: 1px solid var(--line);
@@ -45,7 +44,6 @@
       font-size: 12px; font-weight: 800; text-transform: uppercase;
       color: var(--accent); letter-spacing: 1px; margin-bottom: 12px;
     }
-    /* Zabezpieczenie czytelności tabel z Excela na ciemnym tle */
     .sheetContainer table { margin: 0 auto; border-collapse: collapse; color: inherit; }
   </style>
 </head>
@@ -57,18 +55,19 @@
   </header>
 
   <main id="viewerContent">
-    <div id="loader" class="loader">Analizowanie pliku zbiorczego repozytorium...</div>
+    <div id="loader" class="loader">Pobieranie i separowanie zakładki klienta...</div>
   </main>
 
   <script>
-    // Konfiguracja indeksów tabel w pliku master (każdy klient dostaje dokładnie 3 kolejne tabele)
+    // Konfiguracja mapowania: klucz klienta -> indeks zakładki w Excelu (liczony od 0)
+    // UWAGA: Kolejność tutaj musi odpowiadać kolejności zakładek od lewej do prawej w Excelu.
     const CLIENT_CONFIG = {
-      'biofeed': { title: 'Grupa Biofeed', start: 0, count: 3 },
-      'mirpasz': { title: 'Grupa Mirpasz', start: 3, count: 3 },
-      'iko':     { title: 'Portfel IKO',    start: 6, count: 3 },
-      'ace':     { title: 'Modelowy ACE (Wewnętrzny)', start: 9, count: 3 },
-      'klient5': { title: 'Portfel - Klient 5', start: 12, count: 3 },
-      'klient6': { title: 'Portfel - Klient 6', start: 15, count: 3 }
+      'biofeed': { title: 'Grupa Biofeed', sheetIndex: 0 },
+      'mirpasz': { title: 'Grupa Mirpasz', sheetIndex: 1 },
+      'iko':     { title: 'Portfel IKO',    sheetIndex: 2 },
+      'ace':     { title: 'Modelowy ACE (Wewnętrzny)', sheetIndex: 3 },
+      'klient5': { title: 'Portfel - Klient 5', sheetIndex: 4 },
+      'klient6': { title: 'Portfel - Klient 6', sheetIndex: 5 }
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -77,65 +76,107 @@
       const config = CLIENT_CONFIG[clientKey];
 
       if (!config) {
-        document.getElementById('clientTitle').textContent = 'Błąd krytyczny';
-        document.getElementById('viewerContent').innerHTML = '<div class="loader" style="color:#ff5a5a;">Nieprawidłowy parametr klienta portfela.</div>';
+        document.getElementById('clientTitle').textContent = 'Błąd konfiguracji';
+        document.getElementById('viewerContent').innerHTML = '<div class="loader" style="color:#ff5a5a;">Nieprawidłowy identyfikator klienta.</div>';
         return;
       }
 
-      // Ustawienie nagłówków strony
       document.getElementById('clientTitle').textContent = config.title;
-      document.title = `${config.title} - Widok Analityczny`;
+      document.title = `${config.title} - Portfel`;
 
       try {
-        // Pobranie pojedynczego pliku master zawierającego wszystkie tabele
         const response = await fetch('portfele_master.html?v=' + Date.now());
-        if (!response.ok) throw new Error('Brak dostępu do pliku portfele_master.html');
+        if (!response.ok) throw new Error('Nie znaleziono pliku portfele_master.html na serwerze.');
         
         const htmlText = await response.text();
-        
-        // Parsowanie tekstu do wirtualnego drzewa DOM
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
 
-        // 1. Kopiowanie stylów CSS wygenerowanych przez Excel, aby zachować formatowanie komórek
+        // 1. Kopiowanie stylów CSS z Excela (kluczowe dla prawidłowych kolorów i czcionek)
         doc.querySelectorAll('style').forEach(styleNode => {
           document.head.appendChild(styleNode.cloneNode(true));
         });
 
-        // 2. Pobranie wszystkich głównych obiektów danych (Excel generuje arkusze zazwyczaj jako sekwencyjne tagi <table>)
-        // Jeśli makro generuje divy opakowujące tabele, selektor zadziała na jedne i drugie.
-        const allSheets = doc.querySelectorAll('body > table, body > div');
-        
-        // Filtrowanie wyłącznie elementów zawierających dane (pomijamy puste kontenery strukturalne)
-        const validSheets = Array.from(allSheets).filter(el => el.tagName === 'TABLE' || el.querySelector('table') || el.innerText.trim().length > 0);
+        // 2. Pobranie wszystkich zakładek wyeksportowanych przez Excel
+        // Szukamy elementów table lub divów, które je otaczają
+        const rawElements = doc.querySelectorAll('body > table, body > div');
+        const allSheets = Array.from(rawElements).filter(el => el.tagName === 'TABLE' || el.querySelector('table'));
 
+        // Wybór właściwej zakładki dla zalogowanego klienta
+        const targetSheetContainer = allSheets[config.sheetIndex];
+        if (!targetSheetContainer) throw new Error(`Nie odnaleziono zakładki o indeksie ${config.sheetIndex} w pliku HTML.`);
+
+        // Wyciągamy czystą tabelę <table> z wybranego kontenera
+        const masterTable = targetSheetContainer.tagName === 'TABLE' ? targetSheetContainer : targetSheetContainer.querySelector('table');
+        if (!masterTable) throw new Error('Brak struktury tabeli w wybranej zakładce.');
+
+        const allRows = Array.from(masterTable.querySelectorAll('tr'));
+
+        // 3. Podział wybranej zakładki na 3 podstrony
+        let pages = [];
+        let currentPage = [];
+
+        allRows.forEach((tr, idx) => {
+          const hasPageBreak = tr.style.pageBreakBefore === 'always' || 
+                               tr.style.pageBreakAfter === 'always' ||
+                               tr.getAttribute('style')?.includes('page-break-') ||
+                               tr.className?.toLowerCase().includes('pagebreak');
+
+          if (idx > 0 && hasPageBreak) {
+            pages.push(currentPage);
+            currentPage = [];
+          }
+          currentPage.push(tr);
+        });
+        if (currentPage.length > 0) pages.push(currentPage);
+
+        // Fallback matematyczny: Jeśli Excel nie zapisał znaczników podziału stron w CSS,
+        // dzielimy wiersze tej konkretnej zakładki dokładnie na 3 równe części
+        if (pages.length < 3) {
+          pages = [];
+          const rowsPerPage = Math.ceil(allRows.length / 3);
+          for (let i = 0; i < 3; i++) {
+            const startIdx = i * rowsPerPage;
+            const endIdx = Math.min(startIdx + rowsPerPage, allRows.length);
+            pages.push(allRows.slice(startIdx, endIdx));
+          }
+        }
+
+        // Ukrycie loadera i czyszczenie ekranu
         const container = document.getElementById('viewerContent');
         document.getElementById('loader').style.display = 'none';
 
-        // 3. Wycięcie odpowiedniego fragmentu (3 arkusze dla danego klienta)
-        const clientSheets = validSheets.slice(config.start, config.start + config.count);
+        // 4. Renderowanie wydzielonych 3 stron dla klienta
+        for (let i = 0; i < 3; i++) {
+          if (!pages[i] || pages[i].length === 0) continue;
 
-        if (clientSheets.length === 0) {
-          container.innerHTML = '<div class="loader" style="color:#ff5a5a;">Nie odnaleziono danych w pliku bazowym dla podanego zakresu indeksów.</div>';
-          return;
-        }
-
-        // 4. Wstrzykiwanie danych do widoku
-        clientSheets.forEach((sheet, index) => {
           const wrapper = document.createElement('div');
           wrapper.className = 'sheetContainer';
 
           const label = document.createElement('div');
           label.className = 'sheetLabel';
-          label.textContent = `Arkusz Analizy nr ${index + 1}`;
-          
+          label.textContent = `Strona Analizy ${i + 1} z 3`;
           wrapper.appendChild(label);
-          wrapper.appendChild(sheet.cloneNode(true)); // Klonowanie węzła z pliku źródłowego
+
+          // Klonowanie szkieletu tabeli (aby zachować szerokości i klasy)
+          const pageTable = masterTable.cloneNode(false);
+          
+          // Skopiowanie kolumn <colgroup> dla zachowania szerokości komórek
+          const colGroup = masterTable.querySelector('colgroup');
+          if (colGroup) pageTable.appendChild(colGroup.cloneNode(true));
+
+          const tbody = document.createElement('tbody');
+          pages[i].forEach(row => {
+            tbody.appendChild(row.cloneNode(true));
+          });
+
+          pageTable.appendChild(tbody);
+          wrapper.appendChild(pageTable);
           container.appendChild(wrapper);
-        });
+        }
 
       } catch (error) {
-        document.getElementById('viewerContent').innerHTML = `<div class="loader" style="color:#ff5a5a;">Błąd krytyczny parsowania: ${error.message}</div>`;
+        document.getElementById('viewerContent').innerHTML = `<div class="loader" style="color:#ff5a5a;">Błąd krytyczny parsowania arkusza: ${error.message}</div>`;
       }
     });
   </script>
