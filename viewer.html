@@ -6,17 +6,17 @@
   <title>Portfel Klienta - ACE Group</title>
   <style>
     :root {
-      --bg: #061223;
-      --panel: #0b1b36;
-      --text: #f2f6ff;
-      --line: rgba(125,211,252,.24);
-      --accent: #f1c40f;
+      --bg: #0b1220;
+      --panel: #0f1a33;
+      --text: #eaf0ff;
+      --line: rgba(255,255,255,.10);
+      --accent: #7dd3fc;
     }
     body {
       margin: 0; padding: 24px;
       font-family: Arial, system-ui, -apple-system, sans-serif;
       color: var(--text);
-      background: linear-gradient(180deg, #04101f 0%, #08152a 100%);
+      background: var(--bg);
       min-height: 100vh;
     }
     .header {
@@ -28,23 +28,11 @@
       display: inline-flex; align-items: center; justify-content: center;
       min-height: 42px; padding: 0 20px; border-radius: 12px; text-decoration: none;
       font-size: 15px; font-weight: 700; color: #f4f7ff; border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(28,46,82,.95) 0%, rgba(13,25,47,.98) 100%);
+      background: rgba(255,255,255,.06);
       cursor: pointer; transition: all .18s ease;
     }
-    .btnBack:hover { background: #1c2e52; transform: translateY(-1px); }
-    .loader { text-align: center; padding: 60px; font-size: 18px; color: rgba(242,246,255,.56); font-style: italic; }
-    
-    .sheetContainer {
-      background: rgba(11, 27, 54, 0.4);
-      border: 1px solid var(--line);
-      border-radius: 16px; padding: 20px; margin-bottom: 32px;
-      overflow-x: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
-    .sheetLabel {
-      font-size: 12px; font-weight: 800; text-transform: uppercase;
-      color: var(--accent); letter-spacing: 1px; margin-bottom: 12px;
-    }
-    .sheetContainer table { margin: 0 auto; border-collapse: collapse; color: inherit; }
+    .btnBack:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
+    .loader { text-align: center; padding: 60px; font-size: 18px; color: rgba(234,240,255,.55); font-style: italic; }
   </style>
 </head>
 <body>
@@ -55,19 +43,19 @@
   </header>
 
   <main id="viewerContent">
-    <div id="loader" class="loader">Pobieranie i separowanie zakładki klienta...</div>
+    <div id="loader" class="loader">Pobieranie bazy danych raportów ACE...</div>
   </main>
 
   <script>
-    // Konfiguracja mapowania: klucz klienta -> indeks zakładki w Excelu (liczony od 0)
-    // UWAGA: Kolejność tutaj musi odpowiadać kolejności zakładek od lewej do prawej w Excelu.
+    // Konfiguracja wycinania podstron (każdy klient dostaje po 3 kolejne bloki <section class="page">)
+    // Kolejność musi odpowiadać kolejności oznaczania "TAK" w kolumnie K w Excelu.
     const CLIENT_CONFIG = {
-      'biofeed': { title: 'Grupa Biofeed', sheetIndex: 0 },
-      'mirpasz': { title: 'Grupa Mirpasz', sheetIndex: 1 },
-      'iko':     { title: 'Portfel IKO',    sheetIndex: 2 },
-      'ace':     { title: 'Modelowy ACE (Wewnętrzny)', sheetIndex: 3 },
-      'klient5': { title: 'Portfel - Klient 5', sheetIndex: 4 },
-      'klient6': { title: 'Portfel - Klient 6', sheetIndex: 5 }
+      'biofeed': { title: 'Grupa Biofeed', start: 0, count: 3 },
+      'mirpasz': { title: 'Grupa Mirpasz', start: 3, count: 3 },
+      'iko':     { title: 'Portfel IKO',    start: 6, count: 3 },
+      'ace':     { title: 'Modelowy ACE (Wewnętrzny)', start: 9, count: 3 },
+      'klient5': { title: 'Portfel - Klient 5', start: 12, count: 3 },
+      'klient6': { title: 'Portfel - Klient 6', start: 15, count: 3 }
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -76,107 +64,43 @@
       const config = CLIENT_CONFIG[clientKey];
 
       if (!config) {
-        document.getElementById('clientTitle').textContent = 'Błąd konfiguracji';
-        document.getElementById('viewerContent').innerHTML = '<div class="loader" style="color:#ff5a5a;">Nieprawidłowy identyfikator klienta.</div>';
+        document.getElementById('clientTitle').textContent = 'Błąd';
+        document.getElementById('viewerContent').innerHTML = '<div class="loader" style="color:#ff5a5a;">Nieprawidłowy identyfikator klienta portfela.</div>';
         return;
       }
 
       document.getElementById('clientTitle').textContent = config.title;
-      document.title = `${config.title} - Portfel`;
+      document.title = `${config.title} - Widok analityczny`;
 
       try {
         const response = await fetch('portfele_master.html?v=' + Date.now());
-        if (!response.ok) throw new Error('Nie znaleziono pliku portfele_master.html na serwerze.');
+        if (!response.ok) throw new Error('Brak pliku portfele_master.html. Uruchom Krok 2 w Excelu.');
         
         const htmlText = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
 
-        // 1. Kopiowanie stylów CSS z Excela (kluczowe dla prawidłowych kolorów i czcionek)
-        doc.querySelectorAll('style').forEach(styleNode => {
-          document.head.appendChild(styleNode.cloneNode(true));
-        });
-
-        // 2. Pobranie wszystkich zakładek wyeksportowanych przez Excel
-        // Szukamy elementów table lub divów, które je otaczają
-        const rawElements = doc.querySelectorAll('body > table, body > div');
-        const allSheets = Array.from(rawElements).filter(el => el.tagName === 'TABLE' || el.querySelector('table'));
-
-        // Wybór właściwej zakładki dla zalogowanego klienta
-        const targetSheetContainer = allSheets[config.sheetIndex];
-        if (!targetSheetContainer) throw new Error(`Nie odnaleziono zakładki o indeksie ${config.sheetIndex} w pliku HTML.`);
-
-        // Wyciągamy czystą tabelę <table> z wybranego kontenera
-        const masterTable = targetSheetContainer.tagName === 'TABLE' ? targetSheetContainer : targetSheetContainer.querySelector('table');
-        if (!masterTable) throw new Error('Brak struktury tabeli w wybranej zakładce.');
-
-        const allRows = Array.from(masterTable.querySelectorAll('tr'));
-
-        // 3. Podział wybranej zakładki na 3 podstrony
-        let pages = [];
-        let currentPage = [];
-
-        allRows.forEach((tr, idx) => {
-          const hasPageBreak = tr.style.pageBreakBefore === 'always' || 
-                               tr.style.pageBreakAfter === 'always' ||
-                               tr.getAttribute('style')?.includes('page-break-') ||
-                               tr.className?.toLowerCase().includes('pagebreak');
-
-          if (idx > 0 && hasPageBreak) {
-            pages.push(currentPage);
-            currentPage = [];
-          }
-          currentPage.push(tr);
-        });
-        if (currentPage.length > 0) pages.push(currentPage);
-
-        // Fallback matematyczny: Jeśli Excel nie zapisał znaczników podziału stron w CSS,
-        // dzielimy wiersze tej konkretnej zakładki dokładnie na 3 równe części
-        if (pages.length < 3) {
-          pages = [];
-          const rowsPerPage = Math.ceil(allRows.length / 3);
-          for (let i = 0; i < 3; i++) {
-            const startIdx = i * rowsPerPage;
-            const endIdx = Math.min(startIdx + rowsPerPage, allRows.length);
-            pages.push(allRows.slice(startIdx, endIdx));
-          }
-        }
-
-        // Ukrycie loadera i czyszczenie ekranu
+        // Pobranie wszystkich sekcji stron wygenerowanych przez makro
+        const allPages = doc.querySelectorAll('section.page');
+        
         const container = document.getElementById('viewerContent');
         document.getElementById('loader').style.display = 'none';
 
-        // 4. Renderowanie wydzielonych 3 stron dla klienta
-        for (let i = 0; i < 3; i++) {
-          if (!pages[i] || pages[i].length === 0) continue;
+        // Wycięcie zestawu stron przypisanych do wybranego kafelka
+        const clientPages = Array.from(allPages).slice(config.start, config.start + config.count);
 
-          const wrapper = document.createElement('div');
-          wrapper.className = 'sheetContainer';
-
-          const label = document.createElement('div');
-          label.className = 'sheetLabel';
-          label.textContent = `Strona Analizy ${i + 1} z 3`;
-          wrapper.appendChild(label);
-
-          // Klonowanie szkieletu tabeli (aby zachować szerokości i klasy)
-          const pageTable = masterTable.cloneNode(false);
-          
-          // Skopiowanie kolumn <colgroup> dla zachowania szerokości komórek
-          const colGroup = masterTable.querySelector('colgroup');
-          if (colGroup) pageTable.appendChild(colGroup.cloneNode(true));
-
-          const tbody = document.createElement('tbody');
-          pages[i].forEach(row => {
-            tbody.appendChild(row.cloneNode(true));
-          });
-
-          pageTable.appendChild(tbody);
-          wrapper.appendChild(pageTable);
-          container.appendChild(wrapper);
+        if (clientPages.length === 0) {
+          container.innerHTML = '<div class="loader" style="color:#ff5a5a;">Brak wygenerowanych danych w pliku zbiorczym dla tego klienta. Sprawdź indeksy lub uruchom generowanie HTML ponownie.</div>';
+          return;
         }
 
+        // Wstrzykiwanie wyciętych stron do dokumentu
+        clientPages.forEach(page => {
+          container.appendChild(page.cloneNode(true));
+        });
+
       } catch (error) {
-        document.getElementById('viewerContent').innerHTML = `<div class="loader" style="color:#ff5a5a;">Błąd krytyczny parsowania arkusza: ${error.message}</div>`;
+        document.getElementById('viewerContent').innerHTML = `<div class="loader" style="color:#ff5a5a;">Błąd krytyczny: ${error.message}</div>`;
       }
     });
   </script>
