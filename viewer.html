@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portfel Klienta - ACE Group</title>
+  <style>
+    :root {
+      --bg: #061223;
+      --panel: #0b1b36;
+      --text: #f2f6ff;
+      --line: rgba(125,211,252,.24);
+      --accent: #f1c40f;
+    }
+    body {
+      margin: 0; padding: 24px;
+      font-family: Arial, system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #04101f 0%, #08152a 100%);
+      min-height: 100vh;
+    }
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px; border-bottom: 1px solid var(--line); padding-bottom: 16px;
+    }
+    .clientTitle { margin: 0; font-size: 32px; font-weight: 900; color: var(--text); }
+    .btnBack {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 42px; padding: 0 20px; border-radius: 12px; text-decoration: none;
+      font-size: 15px; font-weight: 700; color: #f4f7ff; border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(28,46,82,.95) 0%, rgba(13,25,47,.98) 100%);
+      cursor: pointer; transition: all .18s ease;
+    }
+    .btnBack:hover { background: #1c2e52; transform: translateY(-1px); }
+    .loader { text-align: center; padding: 60px; font-size: 18px; color: rgba(242,246,255,.56); font-style: italic; }
+    
+    /* Kontenery na arkusze wyciągnięte z Excela */
+    .sheetContainer {
+      background: rgba(11, 27, 54, 0.4);
+      border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px; margin-bottom: 32px;
+      overflow-x: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .sheetLabel {
+      font-size: 12px; font-weight: 800; text-transform: uppercase;
+      color: var(--accent); letter-spacing: 1px; margin-bottom: 12px;
+    }
+    /* Zabezpieczenie czytelności tabel z Excela na ciemnym tle */
+    .sheetContainer table { margin: 0 auto; border-collapse: collapse; color: inherit; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <h1 class="clientTitle" id="clientTitle">Ładowanie danych...</h1>
+    <a href="index.html" class="btnBack">← Powrót do pulpitu</a>
+  </header>
+
+  <main id="viewerContent">
+    <div id="loader" class="loader">Analizowanie pliku zbiorczego repozytorium...</div>
+  </main>
+
+  <script>
+    // Konfiguracja indeksów tabel w pliku master (każdy klient dostaje dokładnie 3 kolejne tabele)
+    const CLIENT_CONFIG = {
+      'biofeed': { title: 'Grupa Biofeed', start: 0, count: 3 },
+      'mirpasz': { title: 'Grupa Mirpasz', start: 3, count: 3 },
+      'iko':     { title: 'Portfel IKO',    start: 6, count: 3 },
+      'ace':     { title: 'Modelowy ACE (Wewnętrzny)', start: 9, count: 3 },
+      'klient5': { title: 'Portfel - Klient 5', start: 12, count: 3 },
+      'klient6': { title: 'Portfel - Klient 6', start: 15, count: 3 }
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const clientKey = params.get('client');
+      const config = CLIENT_CONFIG[clientKey];
+
+      if (!config) {
+        document.getElementById('clientTitle').textContent = 'Błąd krytyczny';
+        document.getElementById('viewerContent').innerHTML = '<div class="loader" style="color:#ff5a5a;">Nieprawidłowy parametr klienta portfela.</div>';
+        return;
+      }
+
+      // Ustawienie nagłówków strony
+      document.getElementById('clientTitle').textContent = config.title;
+      document.title = `${config.title} - Widok Analityczny`;
+
+      try {
+        // Pobranie pojedynczego pliku master zawierającego wszystkie tabele
+        const response = await fetch('portfele_master.html?v=' + Date.now());
+        if (!response.ok) throw new Error('Brak dostępu do pliku portfele_master.html');
+        
+        const htmlText = await response.text();
+        
+        // Parsowanie tekstu do wirtualnego drzewa DOM
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, 'text/html');
+
+        // 1. Kopiowanie stylów CSS wygenerowanych przez Excel, aby zachować formatowanie komórek
+        doc.querySelectorAll('style').forEach(styleNode => {
+          document.head.appendChild(styleNode.cloneNode(true));
+        });
+
+        // 2. Pobranie wszystkich głównych obiektów danych (Excel generuje arkusze zazwyczaj jako sekwencyjne tagi <table>)
+        // Jeśli makro generuje divy opakowujące tabele, selektor zadziała na jedne i drugie.
+        const allSheets = doc.querySelectorAll('body > table, body > div');
+        
+        // Filtrowanie wyłącznie elementów zawierających dane (pomijamy puste kontenery strukturalne)
+        const validSheets = Array.from(allSheets).filter(el => el.tagName === 'TABLE' || el.querySelector('table') || el.innerText.trim().length > 0);
+
+        const container = document.getElementById('viewerContent');
+        document.getElementById('loader').style.display = 'none';
+
+        // 3. Wycięcie odpowiedniego fragmentu (3 arkusze dla danego klienta)
+        const clientSheets = validSheets.slice(config.start, config.start + config.count);
+
+        if (clientSheets.length === 0) {
+          container.innerHTML = '<div class="loader" style="color:#ff5a5a;">Nie odnaleziono danych w pliku bazowym dla podanego zakresu indeksów.</div>';
+          return;
+        }
+
+        // 4. Wstrzykiwanie danych do widoku
+        clientSheets.forEach((sheet, index) => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'sheetContainer';
+
+          const label = document.createElement('div');
+          label.className = 'sheetLabel';
+          label.textContent = `Arkusz Analizy nr ${index + 1}`;
+          
+          wrapper.appendChild(label);
+          wrapper.appendChild(sheet.cloneNode(true)); // Klonowanie węzła z pliku źródłowego
+          container.appendChild(wrapper);
+        });
+
+      } catch (error) {
+        document.getElementById('viewerContent').innerHTML = `<div class="loader" style="color:#ff5a5a;">Błąd krytyczny parsowania: ${error.message}</div>`;
+      }
+    });
+  </script>
+</body>
+</html>
