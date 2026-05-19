@@ -6,42 +6,20 @@
   <title>Portfel Klienta - ACE Group</title>
   <style>
     :root {
-      --bg: #0b1220;
-      --panel: #0f1a33;
-      --text: #eaf0ff;
-      --line: rgba(255,255,255,.10);
-      --accent: #7dd3fc;
+      --bg: #0b1220; --panel: #0f1a33; --text: #eaf0ff;
+      --line: rgba(255,255,255,.10); --accent: #7dd3fc;
     }
     html, body { height: 100%; margin: 0; }
     body {
-      font-family: Arial, system-ui, -apple-system, sans-serif;
-      color: var(--text);
-      /* Identyczne tło graficzne jak w pliku głównym master dla zachowania kontrastu */
-      background: 
-        radial-gradient(1200px 600px at 10% 0%, rgba(125,211,252,.14), transparent 60%),
-        radial-gradient(900px 500px at 90% 10%, rgba(167,139,250,.12), transparent 55%),
-        var(--bg);
-      padding: 24px;
-      box-sizing: border-box;
+      font-family: Arial, system-ui, -apple-system, sans-serif; color: var(--text);
+      background: radial-gradient(1200px 600px at 10% 0%, rgba(125,211,252,.14), transparent 60%), radial-gradient(900px 500px at 90% 10%, rgba(167,139,250,.12), transparent 55%), var(--bg);
+      padding: 24px; box-sizing: border-box;
     }
-    .header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 24px; border-bottom: 1px solid var(--line); padding-bottom: 16px;
-      max-width: 1700px; margin-left: auto; margin-right: auto;
-    }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--line); padding-bottom: 16px; max-width: 1700px; margin-left: auto; margin-right: auto; }
     .clientTitle { margin: 0; font-size: 32px; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
-    .btnBack {
-      display: inline-flex; align-items: center; justify-content: center;
-      min-height: 42px; padding: 0 20px; border-radius: 12px; text-decoration: none;
-      font-size: 15px; font-weight: 700; color: #f4f7ff; border: 1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      cursor: pointer; transition: all .18s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
+    .btnBack { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 20px; border-radius: 12px; text-decoration: none; font-size: 15px; font-weight: 700; color: #f4f7ff; border: 1px solid var(--line); background: rgba(255,255,255,.06); cursor: pointer; transition: all .18s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .btnBack:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
     .loader { text-align: center; padding: 100px; font-size: 18px; color: rgba(234,240,255,.55); font-style: italic; }
-    
-    /* Klasa .wrap przywraca marginesy i centrowanie identycznie jak w pliku master */
     .wrap { max-width: 1700px; margin: 0 auto; padding: 0 0 42px; }
   </style>
 </head>
@@ -57,23 +35,14 @@
   </main>
 
   <script>
-    const CLIENT_CONFIG = {
-      'biofeed': { title: 'Grupa Biofeed' },
-      'mirpasz': { title: 'Grupa Mirpasz' },
-      'iko':     { title: 'Portfel IKO' },
-      'ace':     { title: 'Modelowy ACE (Wewnętrzny)' },
-      'klient5': { title: 'Portfel - Klient 5' },
-      'klient6': { title: 'Portfel - Klient 6' }
-    };
-
     document.addEventListener('DOMContentLoaded', async () => {
       const params = new URLSearchParams(window.location.search);
-      const clientKey = params.get('client');
-      const config = CLIENT_CONFIG[clientKey];
+      // Pobieramy indeks numeryczny (0 dla 1. firmy, 5 dla 6. firmy itd.)
+      const clientIdx = parseInt(params.get('client'), 10);
 
-      if (!config) {
-        document.getElementById('clientTitle').textContent = 'Błąd pobierania';
-        document.getElementById('viewerContent').innerHTML = '<div class="loader" style="color:#ff5a5a;">Nieprawidłowy parametr klienta.</div>';
+      if (isNaN(clientIdx) || clientIdx < 0) {
+        document.getElementById('clientTitle').textContent = 'Błąd';
+        document.getElementById('viewerContent').innerHTML = '<div class="loader" style="color:#ff5a5a;">Nieprawidłowy parametr identyfikacyjny portfela.</div>';
         return;
       }
 
@@ -85,39 +54,41 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
 
-        // Zaimportowanie oryginalnych arkuszy stylów CSS wygenerowanych przez makro
         doc.querySelectorAll('style').forEach(styleNode => {
           document.head.appendChild(styleNode.cloneNode(true));
         });
 
-        // Pobranie stron oznaczonych bezpiecznym tokenem dynamicznym
-        const clientPages = doc.querySelectorAll(`section.page[data-client="${clientKey}"]`);
+        // Pobieramy wszystkie wygenerowane sekcje stron
+        const allPages = doc.querySelectorAll('section.page');
         
+        // MATEMATYCZNE WYCINANIE BLOKU 3 STRON
+        const startIndex = clientIdx * 3;
+        const endIndex = startIndex + 3;
+        const clientPages = Array.from(allPages).slice(startIndex, endIndex);
+
         const container = document.getElementById('viewerContent');
         document.getElementById('loader').style.display = 'none';
 
         if (clientPages.length === 0) {
-          container.innerHTML = '<div class="loader" style="color:#ff5a5a;">Brak wygenerowanych danych dla tego klienta w bazie master. Upewnij się, że w Excelu zaznaczono opcję "TAK" dla tego podmiotu.</div>';
+          container.innerHTML = '<div class="loader" style="color:#ff5a5a;">Brak wygenerowanych danych dla tego indeksu w pliku master. Upewnij się, że ta firma jest zaznaczona w Excelu jako TAK.</div>';
           return;
         }
 
-        // Pobranie oficjalnej pełnej nazwy firmy z pierwszego nagłówka h2
+        // Automatyczne ustawienie tytułu okna na podstawie pierwszego h2 wyciętej strony
         const firstPageTitle = clientPages[0].querySelector('.pageTitle');
         if (firstPageTitle) {
           const cleanCompanyName = firstPageTitle.textContent.split(' - ')[0].trim();
           document.getElementById('clientTitle').textContent = cleanCompanyName;
           document.title = `${cleanCompanyName} - Portfel ACE`;
-        } else {
-          document.getElementById('clientTitle').textContent = config.title;
         }
 
-        // Wstrzyknięcie perfekcyjnie sformatowanych sekcji do widoku
+        // Wstrzyknięcie stron na ekran
         clientPages.forEach(page => {
           container.appendChild(page.cloneNode(true));
         });
 
       } catch (error) {
-        document.getElementById('viewerContent').innerHTML = `<div class="loader" style="color:#ff5a5a;">Błąd krytyczny silnika renderującego: ${error.message}</div>`;
+        document.getElementById('viewerContent').innerHTML = `<div class="loader" style="color:#ff5a5a;">Błąd krytyczny silnika: ${error.message}</div>`;
       }
     });
   </script>
