@@ -18,62 +18,347 @@
       --oldBg:rgba(255,255,255,.08); --oldText:#dce7ff;
       --errBg:rgba(255,90,90,.12); --errText:#ffdede;
     }
-    *{box-sizing:border-box} html,body{height:100%}
-    body{
-      margin:0; font-family:Arial,system-ui,-apple-system,sans-serif; color:var(--text);
-      background: radial-gradient(1100px 650px at 8% 0%, rgba(59,130,246,.15), transparent 55%), radial-gradient(850px 550px at 100% 0%, rgba(167,139,250,.08), transparent 50%), linear-gradient(180deg, #04101f 0%, #071225 36%, #08152a 100%);
+
+    *{box-sizing:border-box}
+
+    html,body{
+      height:100%;
     }
-    .wrap{ max-width:1600px; margin:0 auto; padding:18px 22px 36px; }
-    .hero{ display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:18px; margin-bottom:18px; min-height:92px; }
-    .brandLeft{ display:flex; align-items:center; gap:16px; }
-    .topLogo{ display:block; object-fit:contain; filter:drop-shadow(0 10px 26px rgba(0,0,0,.28)); }
-    .aceLogo{ height:64px; width:auto; }
-    .heroTitle{ margin:0; font-size:46px; line-height:1.04; font-weight:900; text-align:center; text-shadow:0 8px 30px rgba(0,0,0,.35); }
-    .heroAside{ text-align:right; font-size:20px; font-style:italic; color:var(--accent); font-weight:800; min-width:230px; }
-    .topActionBar{ display:flex; justify-content:center; align-items:center; margin:0 0 18px; }
-    .backToMainBtn{ display:inline-flex; align-items:center; justify-content:center; min-height:50px; padding:0 20px; border-radius:18px; text-decoration:none; font-size:18px; font-weight:700; color:#f4f7ff; border:1px solid rgba(125,211,252,.22); background: linear-gradient(180deg, rgba(28,46,82,.95) 0%, rgba(13,25,47,.98) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 10px 26px rgba(0,0,0,.28); transition:all .18s ease; }
-    .panel{ border:1px solid rgba(125,211,252,.18); background: linear-gradient(180deg, rgba(17,30,58,.90) 0%, rgba(9,20,40,.96) 100%); border-radius:28px; padding:22px; box-shadow:var(--shadow); }
-    .summaryWrapper { position: relative; height: auto; margin-bottom: 24px; border-radius: 20px; border: 1px solid var(--line); background: rgba(11, 27, 54, 0.4); overflow: auto; display: flex; justify-content: center; align-items: flex-start; padding: 10px; }
-    .expandBtn { position: absolute; top: 15px; right: 25px; background: var(--panel); color: #fff; border: 1px solid var(--line); padding: 10px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; z-index: 10001; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .card{ position:relative; display:flex; flex-direction:column; justify-content:space-between; min-height:200px; padding:20px; border-radius:24px; text-decoration:none; color:var(--text); border:1px solid var(--line); background: radial-gradient(560px 220px at 0% 0%, rgba(125,211,252,.11), transparent 58%), linear-gradient(180deg, rgba(80,108,156,.24) 0%, rgba(17,31,57,.94) 54%, rgba(11,21,41,.98) 100%); box-shadow:var(--shadow); overflow:hidden; transition:transform .18s ease, box-shadow .18s ease; }
-    .card:hover{ transform:translateY(-4px); border-color:rgba(125,211,252,.48); }
-    .metaTop{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-    .cardTag{ display:inline-flex; padding:6px 12px; border-radius:999px; border:1px solid rgba(125,211,252,.45); background:rgba(125,211,252,.12); color:#dff4ff; font-size:12px; font-weight:800; }
-    .marketPill{ color:var(--muted2); font-size:12px; font-weight:700; text-transform: uppercase; }
-    .card h3{ margin:0 0 8px; font-size:22px; font-weight:900; color: #fff; }
-    .card p{ margin:0; color:var(--muted); font-size:14px; line-height:1.4; }
-    .cardFooter{ margin-top:16px; padding-top:12px; border-top:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; align-items:center; }
-    .updateBadge{ display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:999px; font-size:13px; font-weight:800; }
-    .updateBadge.is-loading{ background:rgba(255,255,255,.08); color:#dce7ff; }
-    .updateBadge.is-today{ background:var(--ok); color:#071225; }
-    .updateBadge.is-error{ background:var(--errBg); color:var(--errText); }
-    @media (max-width:1200px){ .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width:760px){ .grid { grid-template-columns: 1fr; } .heroTitle { font-size: 28px; } }
+
+    body{
+      margin:0;
+      font-family:Arial,system-ui,-apple-system,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1100px 650px at 8% 0%, rgba(59,130,246,.15), transparent 55%),
+        radial-gradient(850px 550px at 100% 0%, rgba(167,139,250,.08), transparent 50%),
+        linear-gradient(180deg, #04101f 0%, #071225 36%, #08152a 100%);
+    }
+
+    .wrap{
+      max-width:1600px;
+      margin:0 auto;
+      padding:18px 22px 36px;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      align-items:center;
+      gap:18px;
+      margin-bottom:18px;
+      min-height:92px;
+    }
+
+    .brandLeft{
+      display:flex;
+      align-items:center;
+      gap:16px;
+    }
+
+    .topLogo{
+      display:block;
+      object-fit:contain;
+      filter:drop-shadow(0 10px 26px rgba(0,0,0,.28));
+    }
+
+    .aceLogo{
+      height:64px;
+      width:auto;
+    }
+
+    .heroTitle{
+      margin:0;
+      font-size:46px;
+      line-height:1.04;
+      font-weight:900;
+      text-align:center;
+      text-shadow:0 8px 30px rgba(0,0,0,.35);
+    }
+
+    .heroAside{
+      text-align:right;
+      font-size:20px;
+      font-style:italic;
+      color:var(--accent);
+      font-weight:800;
+      min-width:230px;
+    }
+
+    .topActionBar{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin:0 0 18px;
+    }
+
+    .backToMainBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:50px;
+      padding:0 20px;
+      border-radius:18px;
+      text-decoration:none;
+      font-size:18px;
+      font-weight:700;
+      color:#f4f7ff;
+      border:1px solid rgba(125,211,252,.22);
+      background:linear-gradient(180deg, rgba(28,46,82,.95) 0%, rgba(13,25,47,.98) 100%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 10px 26px rgba(0,0,0,.28);
+      transition:all .18s ease;
+    }
+
+    .panel{
+      border:1px solid rgba(125,211,252,.18);
+      background:linear-gradient(180deg, rgba(17,30,58,.90) 0%, rgba(9,20,40,.96) 100%);
+      border-radius:28px;
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+
+    .summaryWrapper{
+      position:relative;
+      height:auto;
+      margin-bottom:24px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:rgba(11, 27, 54, 0.4);
+      overflow:auto;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      padding:10px;
+    }
+
+    .summaryImage{
+      display:block;
+      max-width:100%;
+      height:auto;
+      border-radius:12px;
+    }
+
+    .expandBtn{
+      position:absolute;
+      top:15px;
+      right:25px;
+      background:var(--panel);
+      color:#fff;
+      border:1px solid var(--line);
+      padding:10px 20px;
+      border-radius:12px;
+      font-weight:bold;
+      cursor:pointer;
+      z-index:10001;
+      box-shadow:0 10px 24px rgba(0,0,0,.35);
+    }
+
+    /* TO BYŁO POTRZEBNE — TRYB POWIĘKSZENIA */
+    .summaryWrapper.is-fullscreen{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100vh;
+      z-index:10000;
+      margin:0;
+      padding:76px 24px 24px;
+      border-radius:0;
+      border:none;
+      background:rgba(4,16,31,.98);
+      overflow:auto;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    .summaryWrapper.is-fullscreen .expandBtn{
+      position:fixed;
+      top:18px;
+      right:28px;
+    }
+
+    .summaryWrapper.is-fullscreen .summaryImage{
+      width:min(2200px, calc(100vw - 48px));
+      max-width:none;
+      height:auto;
+      border-radius:14px;
+      box-shadow:0 22px 60px rgba(0,0,0,.55);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:18px;
+    }
+
+    .card{
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      min-height:200px;
+      padding:20px;
+      border-radius:24px;
+      text-decoration:none;
+      color:var(--text);
+      border:1px solid var(--line);
+      background:
+        radial-gradient(560px 220px at 0% 0%, rgba(125,211,252,.11), transparent 58%),
+        linear-gradient(180deg, rgba(80,108,156,.24) 0%, rgba(17,31,57,.94) 54%, rgba(11,21,41,.98) 100%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-4px);
+      border-color:rgba(125,211,252,.48);
+    }
+
+    .metaTop{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .cardTag{
+      display:inline-flex;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(125,211,252,.45);
+      background:rgba(125,211,252,.12);
+      color:#dff4ff;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .marketPill{
+      color:var(--muted2);
+      font-size:12px;
+      font-weight:700;
+      text-transform:uppercase;
+    }
+
+    .card h3{
+      margin:0 0 8px;
+      font-size:22px;
+      font-weight:900;
+      color:#fff;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.4;
+    }
+
+    .cardFooter{
+      margin-top:16px;
+      padding-top:12px;
+      border-top:1px solid rgba(255,255,255,.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .updateBadge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .updateBadge.is-loading{
+      background:rgba(255,255,255,.08);
+      color:#dce7ff;
+    }
+
+    .updateBadge.is-today{
+      background:var(--ok);
+      color:#071225;
+    }
+
+    .updateBadge.is-error{
+      background:var(--errBg);
+      color:var(--errText);
+    }
+
+    @media (max-width:1200px){
+      .grid{
+        grid-template-columns:repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width:760px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+
+      .hero{
+        grid-template-columns:1fr;
+        text-align:center;
+      }
+
+      .brandLeft{
+        justify-content:center;
+      }
+
+      .heroTitle{
+        font-size:28px;
+      }
+
+      .heroAside{
+        text-align:center;
+        min-width:auto;
+      }
+
+      .summaryWrapper.is-fullscreen{
+        padding:74px 12px 18px;
+      }
+
+      .summaryWrapper.is-fullscreen .summaryImage{
+        width:calc(100vw - 24px);
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header class="hero">
-      <div class="brandLeft"><img src="ACE-white.png?v=1" alt="ACE" class="topLogo aceLogo"></div>
+      <div class="brandLeft">
+        <img src="ACE-white.png?v=1" alt="ACE" class="topLogo aceLogo">
+      </div>
+
       <h1 class="heroTitle">Portfele Klientów - ACE Group</h1>
+
       <div class="heroAside">Widok analityczny</div>
     </header>
 
     <div class="topActionBar">
-      <a class="backToMainBtn" href="https://raporty.ace-group.pl/" target="_blank">Panel Główny Raportów</a>
+      <a class="backToMainBtn" href="https://raporty.ace-group.pl/" target="_blank">
+        Panel Główny Raportów
+      </a>
     </div>
 
     <main class="panel">
       <div class="summaryWrapper" id="summaryWrapper">
-        <button class="expandBtn" id="expandBtn">Powiększ tabelę</button>
+        <button class="expandBtn" id="expandBtn" type="button">Powiększ tabelę</button>
         <img src="portfel_wszyscy.png" id="tableImage" alt="Tabela Zbiorcza Portfela" class="summaryImage">
       </div>
 
       <div class="grid" id="companyGrid">
         <a class="card reportCard" href="viewer.html?client=0" data-idx="0">
           <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel 1</span><span class="marketPill" id="pill-0">...</span></div>
+            <div class="metaTop">
+              <span class="cardTag">Portfel 1</span>
+              <span class="marketPill" id="pill-0">...</span>
+            </div>
             <h3 id="title-0">Analiza...</h3>
             <p>Pełne zestawienie pozycji i strategii zakupowej.</p>
           </div>
@@ -85,7 +370,10 @@
 
         <a class="card reportCard" href="viewer.html?client=1" data-idx="1">
           <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel 2</span><span class="marketPill" id="pill-1">...</span></div>
+            <div class="metaTop">
+              <span class="cardTag">Portfel 2</span>
+              <span class="marketPill" id="pill-1">...</span>
+            </div>
             <h3 id="title-1">Analiza...</h3>
             <p>Pełne zestawienie pozycji i strategii zakupowej.</p>
           </div>
@@ -97,7 +385,10 @@
 
         <a class="card reportCard" href="viewer.html?client=2" data-idx="2">
           <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel 3</span><span class="marketPill" id="pill-2">...</span></div>
+            <div class="metaTop">
+              <span class="cardTag">Portfel 3</span>
+              <span class="marketPill" id="pill-2">...</span>
+            </div>
             <h3 id="title-2">Analiza...</h3>
             <p>Pełne zestawienie pozycji i strategii zakupowej.</p>
           </div>
@@ -109,7 +400,10 @@
 
         <a class="card reportCard" href="viewer.html?client=3" data-idx="3">
           <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel 4</span><span class="marketPill" id="pill-3">...</span></div>
+            <div class="metaTop">
+              <span class="cardTag">Portfel 4</span>
+              <span class="marketPill" id="pill-3">...</span>
+            </div>
             <h3 id="title-3">Analiza...</h3>
             <p>Pełne zestawienie pozycji i strategii zakupowej.</p>
           </div>
@@ -121,7 +415,10 @@
 
         <a class="card reportCard" href="viewer.html?client=4" data-idx="4">
           <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel 5</span><span class="marketPill" id="pill-4">...</span></div>
+            <div class="metaTop">
+              <span class="cardTag">Portfel 5</span>
+              <span class="marketPill" id="pill-4">...</span>
+            </div>
             <h3 id="title-4">Analiza...</h3>
             <p>Pełne zestawienie pozycji i strategii zakupowej.</p>
           </div>
@@ -133,7 +430,10 @@
 
         <a class="card reportCard" href="viewer.html?client=5" data-idx="5">
           <div class="content">
-            <div class="metaTop"><span class="cardTag">Portfel 6</span><span class="marketPill" id="pill-5">...</span></div>
+            <div class="metaTop">
+              <span class="cardTag">Portfel 6</span>
+              <span class="marketPill" id="pill-5">...</span>
+            </div>
             <h3 id="title-5">Analiza...</h3>
             <p>Pełne zestawienie pozycji i strategii zakupowej.</p>
           </div>
@@ -150,10 +450,21 @@
     const expandBtn = document.getElementById('expandBtn');
     const summaryWrapper = document.getElementById('summaryWrapper');
 
+    function setFullscreen(isFullscreen) {
+      summaryWrapper.classList.toggle('is-fullscreen', isFullscreen);
+      expandBtn.textContent = isFullscreen ? 'Zamknij ×' : 'Powiększ tabelę';
+      document.body.style.overflow = isFullscreen ? 'hidden' : '';
+    }
+
     expandBtn.addEventListener('click', () => {
-      summaryWrapper.classList.toggle('is-fullscreen');
-      expandBtn.textContent = summaryWrapper.classList.contains('is-fullscreen') ? 'Zamknij X' : 'Powiększ tabelę';
-      document.body.style.overflow = summaryWrapper.classList.contains('is-fullscreen') ? 'hidden' : 'auto';
+      const isFullscreen = !summaryWrapper.classList.contains('is-fullscreen');
+      setFullscreen(isFullscreen);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && summaryWrapper.classList.contains('is-fullscreen')) {
+        setFullscreen(false);
+      }
     });
 
     // CAŁKOWICIE DYNAMICZNY PODZIAŁ CO 3 STRONY
@@ -163,6 +474,7 @@
 
       try {
         const response = await fetch('portfele_master.html?v=' + Date.now());
+
         badges.forEach(b => b.classList.remove('is-loading'));
 
         if (response.ok) {
@@ -172,13 +484,14 @@
 
           // Pobieramy wszystkie strony z pliku master
           const allPages = doc.querySelectorAll('section.page');
-          
+
           const lm = response.headers.get('Last-Modified');
-          const dateStr = lm ? new Date(lm).toLocaleDateString('pl-PL') : "Zaktualizowano";
+          const dateStr = lm ? new Date(lm).toLocaleDateString('pl-PL') : 'Zaktualizowano';
+
           dateSpans.forEach(s => s.textContent = dateStr);
           badges.forEach(b => b.classList.add('is-today'));
 
-          // Pętla iteruje po kafelkach i wyciąga nazwy z co 3. strony (indeksy: 0, 3, 6, 9, 12, 15)
+          // Pętla iteruje po kafelkach i wyciąga nazwy z co 3. strony: 0, 3, 6, 9, 12, 15
           for (let cardIdx = 0; cardIdx < 6; cardIdx++) {
             const pageIndexInMaster = cardIdx * 3;
             const titleEl = document.getElementById(`title-${cardIdx}`);
@@ -187,33 +500,42 @@
 
             if (allPages[pageIndexInMaster]) {
               const h2Title = allPages[pageIndexInMaster].querySelector('.pageTitle');
+
               if (h2Title) {
-                // Wyciągamy samą nazwę firmy (odcinamy " - Strona X")
                 const cleanName = h2Title.textContent.split(' - ')[0].trim();
+
                 if (titleEl) titleEl.textContent = cleanName;
                 if (pillEl) pillEl.textContent = cleanName;
-                if (cardLink) cardLink.style.display = "flex"; // Pokaż kafelek
+                if (cardLink) cardLink.style.display = 'flex';
               }
             } else {
-              // Jeśli w master HTML nie ma tylu stron (bo np. wygenerowano tylko 4 firmy), ukrywamy puste kafelki
-              if (cardLink) cardLink.style.display = "none";
+              if (cardLink) cardLink.style.display = 'none';
             }
           }
 
         } else {
           badges.forEach(b => b.classList.add('is-error'));
-          dateSpans.forEach(s => s.textContent = "Brak pliku");
+          dateSpans.forEach(s => s.textContent = 'Brak pliku');
         }
+
       } catch (e) {
-        badges.forEach(b => { b.classList.remove('is-loading'); b.classList.add('is-error'); });
-        dateSpans.forEach(s => s.textContent = "Błąd");
+        badges.forEach(b => {
+          b.classList.remove('is-loading');
+          b.classList.add('is-error');
+        });
+
+        dateSpans.forEach(s => s.textContent = 'Błąd');
       }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       syncDashboardData();
+
       const img = document.getElementById('tableImage');
-      if(img) { img.src = img.src + '?v=' + Date.now(); }
+
+      if (img) {
+        img.src = img.src + '?v=' + Date.now();
+      }
     });
   </script>
 </body>
